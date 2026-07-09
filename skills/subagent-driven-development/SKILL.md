@@ -133,11 +133,17 @@ and final reviewer dispatch must pass explicit `model` and
 
 | Dispatch tier | Codex model | reasoning_effort |
 | --- | --- | --- |
-| cheap implementation | `gpt-5.3-codex-spark` | `high` |
-| standard implementation | `gpt-5.4` | `medium` |
-| standard task review | `gpt-5.4` | `high` |
-| strongest implementation/retry/task review | `gpt-5.5` | `high` |
-| final whole-branch review | `gpt-5.5` | `xhigh` |
+| cheap implementation | `gpt-5.6-luna` | `medium` |
+| standard implementation | `gpt-5.6-terra` | `medium` |
+| standard task review | `gpt-5.6-terra` | `high` |
+| strongest implementation/retry/task review | `gpt-5.6-sol` | `high` |
+| final whole-branch review | `gpt-5.6-sol` | `xhigh` |
+
+`max` is not part of the fixed SDD route. Do not automatically raise the
+final whole-branch review above `xhigh`; use `max` only when your human partner
+explicitly requests it for an exceptional quality-first review. Never use
+`ultra` for an SDD dispatch: SDD already owns agent orchestration, and `ultra`
+would introduce nested multi-agent execution.
 
 **Turn count beats token price.** Wall-clock and context cost scale with how
 many turns a subagent takes, and cheap models taking multiple

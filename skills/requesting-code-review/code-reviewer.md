@@ -7,7 +7,7 @@ Use this template when dispatching a code reviewer subagent.
 ```
 Subagent (general-purpose):
   description: "Review code changes"
-  model: gpt-5.5
+  model: gpt-5.6-sol
   reasoning_effort: xhigh
   prompt: |
     You are a Senior Code Reviewer with expertise in software architecture,
