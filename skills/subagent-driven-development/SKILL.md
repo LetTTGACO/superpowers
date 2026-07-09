@@ -98,36 +98,50 @@ conflicts that only emerge from implementation.
 
 ## Model Selection
 
-Use the least powerful model that can handle each role to conserve cost and increase speed.
+Use the least powerful tier that can handle each SDD dispatch. Keep the tier
+decision and Codex model mapping here as the single source of truth.
 
-**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
+**standard is the default.** Use cheap only when the brief is closed-form; use
+strongest only when the dispatch needs architecture-level judgment.
 
-**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use a standard model.
+**cheap implementation:** use for mechanical implementation dispatches where
+the brief names the target files, exact tests, expected RED/GREEN behavior,
+interfaces, and code-level steps or skeletons. Cheap is not limited to
+single-file work; it can span multiple files when the interfaces and change
+points are explicit and the worker is mostly transcribing, wiring, running
+tests, and fixing small errors. Reviewers never use cheap.
 
-**Architecture and design tasks**: use the most capable available model.
-The final whole-branch review is one of these — dispatch it on the most
-capable available model, not the session default.
+**standard implementation/review:** use for prose-driven implementation,
+tasks that require reading existing code patterns, integration behavior,
+shared paths, compatibility, or debugging. Ordinary task reviewers use
+standard. If unsure whether an implementation task is cheap, use standard.
 
-**Review tasks**: choose the model with the same judgment, scaled to the
-diff's size, complexity, and risk. A small mechanical diff does not need the
-most capable model; a subtle concurrency change does.
+**strongest judgment:** use for architecture-heavy implementation, design
+decisions, reasoning-related BLOCKED retries, and high-risk task reviews
+(concurrency, state machines, migrations, security, data consistency, or
+broad cross-module behavior). The final whole-branch review always uses
+strongest.
 
-**Always specify the model explicitly when dispatching a subagent.** An
-omitted model inherits your session's model — often the most capable and
-most expensive — which silently defeats this section.
+**Fix subagents are implementation dispatches for routing purposes.** Choose
+their tier by the work the finding requires: cheap for mechanical, fully
+specified fixes; standard or strongest when the fix requires debugging,
+integration judgment, or design decisions.
+
+When running SDD in Codex, every implementer, fix subagent, task reviewer,
+and final reviewer dispatch must pass explicit `model` and
+`reasoning_effort` overrides. Do not rely on inherited subagent settings.
+
+| Dispatch tier | Codex model | reasoning_effort |
+| --- | --- | --- |
+| cheap implementation | `gpt-5.3-codex-spark` | `high` |
+| standard implementation | `gpt-5.4` | `medium` |
+| standard task review | `gpt-5.4` | `high` |
+| strongest implementation/retry/task review | `gpt-5.5` | `high` |
+| final whole-branch review | `gpt-5.5` | `xhigh` |
 
 **Turn count beats token price.** Wall-clock and context cost scale with how
-many turns a subagent takes, and the cheapest models routinely take 2-3× the
-turns on multi-step work — costing more overall. Use a mid-tier model as the
-floor for reviewers and for implementers working from prose descriptions.
-When the task's plan text contains the complete code to write, the
-implementation is transcription plus testing: use the cheapest tier for
-that implementer. Single-file mechanical fixes also take the cheapest tier.
-
-**Task complexity signals (implementation tasks):**
-- Touches 1-2 files with a complete spec → cheap model
-- Touches multiple files with integration concerns → standard model
-- Requires design judgment or broad codebase understanding → most capable model
+many turns a subagent takes, and cheap models taking multiple
+clarification/fix turns can cost more overall than starting at standard.
 
 ## Handling Implementer Status
 

@@ -7,6 +7,8 @@ Subagent (general-purpose):
   description: "Implement Task N: [task name]"
   model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
          model silently inherits the session's most expensive one]
+  reasoning_effort: [EFFORT — REQUIRED: choose per SKILL.md Model Selection;
+                     an omitted effort inherits the session's effort]
   prompt: |
     You are implementing Task N: [task name]
 
